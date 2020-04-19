@@ -87,3 +87,11 @@ E не является подмножеством F
 E является подмножеством C
 F является подмножеством C
 ```
+
+# Сборка проекта
+Собираете проект с помощью Gradle:
+```
+gradle build
+```
+В папке ```relational_algebra\build\bin\mingw\releaseExecutable```(в случае Windows 10) появляется файл ```relational_algebra.exe```
+Запускаете как обычный исполняемый файл (чтобы увидеть вывод запускайте файл в cmd/powershell)
