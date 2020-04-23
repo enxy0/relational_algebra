@@ -29,21 +29,23 @@ fun main() {
 
     // Создание таблицы истинности по заданному булевому вектору
     val truthTableC = TruthTable.from("C", "11111111")
+    val truthTableV = TruthTable.from("V", "11111111")
 
     // Вывод таблицы истинности
     truthTableD.printTable()
 
     // Вывод булевого вектора
     truthTableD.printVector()
+    truthTableE.printVector()
+    truthTableF.printVector()
+    truthTableC.printVector()
 
     // Проверяем на взаимное расположение
-    // Сначала передается список таблиц, а затем список имен для таблиц
     TruthTable.printSubsetsEquality(
-        arrayListOf(
+        listOf(
             truthTableD,
-            truthTableE,
-            truthTableF,
-            truthTableC
+            truthTableC,
+            truthTableV // Еще один вектор 11111111, но с другим именем для проверки равенства множеств
         )
     )
 }
