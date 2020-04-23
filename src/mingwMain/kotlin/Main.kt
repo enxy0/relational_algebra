@@ -14,21 +14,21 @@ fun main() {
 
     // Создание таблицы истинности (булевого вектора)
     // с помощью заданной функции
-    val truthTableD = TruthTable.from { a, b, c ->
+    val truthTableD = TruthTable.from("D") { a, b, c ->
         // (a \ b) -> c
         (a differs b) implies c
     }
-    val truthTableE = TruthTable.from { a, b, c ->
+    val truthTableE = TruthTable.from("E") { a, b, c ->
         // (a ∆ b) ↑ ¬(a & b)
         (a symDiffers b) nand !(a and b)
     }
-    val truthTableF = TruthTable.from { a, b, c ->
+    val truthTableF = TruthTable.from("F") { a, b, c ->
         // (a ↓ b) ← 1
         (a nor b) converseImplies true
     }
 
     // Создание таблицы истинности по заданному булевому вектору
-    val truthTableC = TruthTable("11111111")
+    val truthTableC = TruthTable.from("C", "11111111")
 
     // Вывод таблицы истинности
     truthTableD.printTable()
@@ -39,7 +39,11 @@ fun main() {
     // Проверяем на взаимное расположение
     // Сначала передается список таблиц, а затем список имен для таблиц
     TruthTable.printSubsetsEquality(
-        arrayListOf(truthTableD, truthTableE, truthTableF, truthTableC),
-        arrayListOf("D", "E", "F", "C")
+        arrayListOf(
+            truthTableD,
+            truthTableE,
+            truthTableF,
+            truthTableC
+        )
     )
 }
