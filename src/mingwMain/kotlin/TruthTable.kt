@@ -124,13 +124,12 @@ class TruthTable private constructor(
          * @param tables - [List] из [TruthTable], которые нужно проверять
          */
         fun printSubsetsEquality(tables: List<TruthTable>) {
-            val isSubset: (String, String) -> String = { a, b -> "$a является подмножеством $b" }
             val subsetList = cartesianProduct(tables, tables).filter { it.first.name != it.second.name } // исключаем равные таблицы
             for ((first, second) in subsetList) {
-                if (first.isSubsetOf(second))
-                    println(isSubset(first.name, second.name))
                 if (first == second)
-                    println("${first.name} равно ${second.name}")
+                    println("${first.name} ⊆ ${second.name}")
+                else if (first.isSubsetOf(second))
+                    println("${first.name} ⊂ ${second.name}")
             }
         }
     }
