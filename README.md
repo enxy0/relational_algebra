@@ -15,22 +15,22 @@
 
 ### Создание таблицы истинности из логической функции (для 2х, 3х и 4х переменных)
 ```kotlin
-val truthTableD = TruthTable.from { a, b, c ->
+val truthTableD = TruthTable.from("D") { a, b, c ->
     // (a \ b) → c
     (a differs b) implies c
 }
 
-val truthTableE = TruthTable.from { a, b, c ->
+val truthTableE = TruthTable.from("E") { a, b, c ->
     // (a ∆ b) ↑ ¬(a & b)
     (a symDiffers b) nand !(a and b)
 }
 
-val truthTableF = TruthTable.from { a, b, c ->
+val truthTableF = TruthTable.from("F") { a, b, c ->
     // (a ↓ b) ← 1
     (a nor b) converseImplies true
 }
 
-val truthTableA = TruthTable.from { a, b, c ->
+val truthTableA = TruthTable.from("A") { a, b, c ->
     // a → c (при этом таблица будет построена для 3 переменных)
     a implies c
 }
@@ -38,7 +38,7 @@ val truthTableA = TruthTable.from { a, b, c ->
 
 ### Создание таблицы истинности по заданному булевому вектору:
 ```kotlin
-val truthTableC = TruthTable("11111111")
+val truthTableC = TruthTable.from("C", "11111111")
 ```
 ### Красивый вывод таблицы истинности:
 ```kotlin
@@ -46,6 +46,7 @@ truthTableD.printTable()
 ```
 Вывод:
 ```
+Таблица истинности D:
 +---+---+---+---+
 | a | b | c | F |
 +---+---+---+---+
@@ -63,29 +64,35 @@ truthTableD.printTable()
 ### Красивый вывод булевого вектора:
 ```kotlin
 truthTableD.printVector()
+truthTableE.printVector()
+truthTableF.printVector()
+truthTableC.printVector()
 ```
 Вывод:
 ```
-(1, 1, 1, 1, 0, 1, 1, 1)
+D = (1, 1, 1, 1, 0, 1, 1, 1)
+E = (1, 1, 0, 0, 0, 0, 1, 1)
+F = (1, 1, 0, 0, 0, 0, 0, 0)
+C = (1, 1, 1, 1, 1, 1, 1, 1)
 ```
 
 ### Проверка на взаимное расположения булевых векторов (равно, входит/не входит в подмножество):
 
 ```kotlin
-// TODO: По хорошему нужно задавать имя таблице истинности/булевому вектору при ее создании. В будущем сделаю =)
 TruthTable.printSubsetsEquality(
-    arrayListOf(truthTableD, truthTableE, truthTableF, truthTableC), // созданнные таблицы
-    arrayListOf("D", "E", "F", "C") // имена таблиц для вывода
+    listOf(
+        truthTableD, // (1, 1, 1, 1, 0, 1, 1, 1)
+        truthTableC, // (1, 1, 1, 1, 1, 1, 1, 1)
+        truthTableV // (1, 1, 1, 1, 1, 1, 1, 1) Еще один для проверки равенства множеств
+    )
 )
 ```
 Вывод:
 ```
-D не является подмножеством E
-D не является подмножеством F
-D является подмножеством C
-E не является подмножеством F
-E является подмножеством C
-F является подмножеством C
+D ⊂ C
+D ⊂ V
+C ⊆ V
+V ⊆ C
 ```
 
 # Сборка проекта
