@@ -40,6 +40,7 @@ fun main() {
     truthTableF.printVector()
     truthTableC.printVector()
 
+    println()
     // Проверяем на взаимное расположение
     TruthTable.printSubsetsEquality(
         listOf(
@@ -48,4 +49,18 @@ fun main() {
             truthTableV // Еще один вектор 11111111, но с другим именем для проверки равенства множеств
         )
     )
+
+    println()
+    // Нахождение противоположных и соседних наборов
+    // Записывать можно в любом удобном формате
+    // Главное, чтобы наборы были разделены запятыми
+    val subset1 = "{(01100),(10100),(11110),(10011),(00011)};"
+    val subset2 = "A = {(01011),(00011),(11101),(11111),(00010)};"
+    println(subset1)
+    findOppositeSubsets(subset1)
+    findNeighboursSubsets(subset1)
+    println()
+    println(subset2)
+    findOppositeSubsets(subset2)
+    findNeighboursSubsets(subset2)
 }
