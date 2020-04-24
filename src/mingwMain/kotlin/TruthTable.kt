@@ -156,7 +156,7 @@ class TruthTable private constructor(
             prettyTable += "+---+---+---+"
             return prettyTable
         } else {
-            throw Throwable("Для построения таблицы истинности из двух переменных, длина вектора должна равняться четерем.")
+            throw Throwable("Для построения таблицы истинности из 2х переменных, длина вектора должна равняться 4.")
         }
     }
 
@@ -182,7 +182,7 @@ class TruthTable private constructor(
             prettyTable += "+---+---+---+---+"
             return prettyTable
         } else {
-            throw Throwable("Для построения таблицы истинности из двух переменных, длина вектора должна равняться восьми.")
+            throw Throwable("Для построения таблицы истинности из 3х переменных, длина вектора должна равняться 8.")
         }
     }
 
@@ -209,7 +209,7 @@ class TruthTable private constructor(
             prettyTable += "+---+---+---+---+---+"
             return prettyTable
         } else {
-            throw Throwable("Для построения таблицы истинности из двух переменных, длина вектора должна равняться восьми.")
+            throw Throwable("Для построения таблицы истинности из 4х переменных, длина вектора должна равняться 16.")
         }
     }
 }
