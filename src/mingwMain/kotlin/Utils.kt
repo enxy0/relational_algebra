@@ -23,7 +23,7 @@ infix fun Boolean.symDiffers(other: Boolean) = (this and !other) or (!this and o
  * @param c1 Первая [Collection]
  * @param c2 Вторая [Collection]
  * @return [List] из [Pair], где каждый элемент первой [Collection] сопоставлен
- * со всеми элементами второй [Collection]
+ * со всеми элементами второй [Collection].
  */
 fun <T, U> cartesianProduct(c1: Collection<T>, c2: Collection<U>): List<Pair<T, U>> {
     return c1.flatMap { first -> c2.map { second -> first to second } }
@@ -36,7 +36,8 @@ fun <T, U> cartesianProduct(c1: Collection<T>, c2: Collection<U>): List<Pair<T, 
  * @param c1 Первая [Collection]
  * @param c2 Вторая [Collection]
  * @return [List] из [Pair], где каждый элемент первой [Collection] сопоставлен
- * со всеми элементами второй [Collection], при этом (3,1) = (1,3)
+ * со всеми элементами второй [Collection] без повторений.
+ * Например не берутся (3,1) и (1,3).
  */
 fun <T, U> permutations(c1: Collection<T>, c2: Collection<U>): List<Pair<T, U>> {
     val permutations = arrayListOf<Pair<T, U>>()
