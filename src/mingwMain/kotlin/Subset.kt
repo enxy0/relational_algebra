@@ -31,7 +31,7 @@ fun findNeighboursSubsets(text: String) {
                 if (item != it.second[index]) acc + 1 else acc
             }
             if (differences == 1)
-                println("($it.first), ($it.second)")
+                println(it)
         } else
             throw Throwable("Нельзя сравнить булевы векторы разной длины. ${it.first}.length=${it.first.length},  ${it.second}.length=${it.second.length}.")
     }
@@ -55,7 +55,7 @@ fun findOppositeSubsets(text: String) {
                 if (item != it.second[index]) acc + 1 else acc
             }
             if (differences == it.first.length)
-                println("($it.first), ($it.second)")
+                println(it)
         } else
             throw Throwable("Нельзя сравнить булевы векторы разной длины. ${it.first}.length=${it.first.length},  ${it.second}.length=${it.second.length}.")
     }
