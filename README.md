@@ -115,32 +115,18 @@ findNeighboursSubsets(subset)
 ```
 
 # Сборка проекта
-### Intellij Idea
+### IntelliJ Idea
 Если вы импоритруете проект с помощью Intellij Idea, то IDE должна подхватить все сама. Вам ничего не нужно делать :)
 
-### Windows 
-1. Собираете проект с помощью Gradle:
+### Для других IDE
+##### Windows 
 ```
-gradle build
+gradlew run
 ```
-2. В папке ```relational_algebra\build\bin\mingw\releaseExecutable\``` появится файл ```relational_algebra.exe```
-3. Запускаете файл в cmd / powershell
 
-### Linux и macOS
-1. Открываете файл ```build.gradle``` и меняете значение под свою систему:
-```groovy
-kotlin {
-    // mingwX64 заменить на linuxX64, если Linux; на macosX64, если macOS.
-    mingwX64("mingw") {
-        //...
-    }
-}
+##### Linux и macOS
 ```
-2. Собираете проект с помощью Gradle:
+./gradlew run
 ```
-gradle build
-```
-3. В папке ```relational_algebra\build\bin\mingw\releaseExecutable\``` появится файл ```relational_algebra.kexe```
-4. Запускаете файл в терминале 
 
 
