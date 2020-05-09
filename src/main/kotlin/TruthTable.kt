@@ -1,7 +1,7 @@
 import kotlin.math.log2
 
 class TruthTable private constructor(
-    val name: String,
+    val name: Char,
     private val varNames: List<Char>,
     private val vector: String,
     private val table: List<Pair<List<Boolean>, Boolean>>
@@ -72,7 +72,7 @@ class TruthTable private constructor(
         /**
          * Создает [TruthTable] по логической функции для двух переменных
          */
-        fun from(name: String, varNames: List<Char>, fn: (Boolean, Boolean) -> Boolean): TruthTable {
+        fun from(name: Char, varNames: List<Char>, fn: (Boolean, Boolean) -> Boolean): TruthTable {
             var vector = ""
             val table = arrayListOf<Pair<ArrayList<Boolean>, Boolean>>()
             for (a in 0..1)
@@ -86,7 +86,7 @@ class TruthTable private constructor(
         /**
          * Создает [TruthTable] по логической функции для трех переменных
          */
-        fun from(name: String, varNames: List<Char>, fn: (Boolean, Boolean, Boolean) -> Boolean): TruthTable {
+        fun from(name: Char, varNames: List<Char>, fn: (Boolean, Boolean, Boolean) -> Boolean): TruthTable {
             var vector = ""
             val table = arrayListOf<Pair<ArrayList<Boolean>, Boolean>>()
             for (a in 0..1)
@@ -107,7 +107,7 @@ class TruthTable private constructor(
         /**
          * Создает [TruthTable] по логической функции для четырех переменных
          */
-        fun from(name: String, varNames: List<Char>, fn: (Boolean, Boolean, Boolean, Boolean) -> Boolean): TruthTable {
+        fun from(name: Char, varNames: List<Char>, fn: (Boolean, Boolean, Boolean, Boolean) -> Boolean): TruthTable {
             var vector = ""
             val table = arrayListOf<Pair<ArrayList<Boolean>, Boolean>>()
             for (a in 0..1)
@@ -130,7 +130,7 @@ class TruthTable private constructor(
         /**
          * Создает [TruthTable] из булевого вектора
          */
-        fun from(name: String, varNames: List<Char>, vector: String): TruthTable {
+        fun from(name: Char, varNames: List<Char>, vector: String): TruthTable {
             val isPowerOfTwo = (vector.length) and (vector.length - 1) == 0
             if (isPowerOfTwo && vector.length >= 4) {
                 val product = when (vector.length) {

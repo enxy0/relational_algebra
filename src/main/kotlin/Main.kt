@@ -14,24 +14,34 @@ fun main() {
     * x ~ y = x == y
     */
 
-    // Создание таблицы истинности (булевого вектора)
-    // с помощью заданной функции
-    val truthTableD = TruthTable.from("D", listOf('a', 'b', 'c')) { a, b, c ->
-        // (a \ b) -> c
+    // Создание таблицы истинности (булевого вектора) с помощью заданной функции
+    // для 2х переменных
+    val truthTableE = TruthTable.from('E', listOf('x', 'y')) { x, y ->
+        // (x ∆ y) ↑ ¬(x & y)
+        (x symDiffers y) nand !(x and y)
+    }
+
+    // для 3х переменных
+    val truthTableD = TruthTable.from('D', listOf('a', 'b', 'c')) { a, b, c ->
+        // (a \ b) → c
         (a differs b) implies c
     }
-    val truthTableE = TruthTable.from("E", listOf('a', 'b', 'c')) { a, b, c ->
-        // (a ∆ b) ↑ ¬(a & b)
-        (a symDiffers b) nand !(a and b)
+
+    // для 4х переменных
+    val truthTableF = TruthTable.from('F', listOf('a', 'b', 'c', 'd')) { a, b, c, d ->
+        // (a ↓ b) ← (1 ∨ (c & d))
+        (a nor b) converseImplies (true or (c and d))
     }
-    val truthTableF = TruthTable.from("F", listOf('a', 'b', 'c')) { a, b, c ->
-        // (a ↓ b) ← 1
-        (a nor b) converseImplies true
+
+    // для 3х переменных (при этом функция использует две переменные)
+    val truthTableA = TruthTable.from('A', listOf('a', 'b', 'c')) { a, b, c ->
+        // a → c
+        a implies c
     }
 
     // Создание таблицы истинности по заданному булевому вектору
-    val truthTableC = TruthTable.from("C", listOf('x', 'y', 'z'), "11111111")
-    val truthTableV = TruthTable.from("V", listOf('a', 'b', 'c'), "11111111")
+    val truthTableC = TruthTable.from('C', listOf('x', 'y', 'z'), "11111111")
+    val truthTableV = TruthTable.from('V', listOf('a', 'b', 'c'), "11111111")
 
     // Вывод таблицы истинности
     truthTableD.printTable()
