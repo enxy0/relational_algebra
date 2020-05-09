@@ -1,11 +1,15 @@
+import kotlin.math.log2
+
 class TruthTable private constructor(
     val name: String,
-    private val body: String
+    private val varNames: List<Char>,
+    private val vector: String,
+    private val table: List<Pair<List<Boolean>, Boolean>>
 ) {
     override fun equals(other: Any?): Boolean {
         return when (other) {
-            is TruthTable -> this.body == other.body
-            is String -> this.body == other
+            is TruthTable -> this.table == other.table
+            is String -> this.name == other
             else -> false
         }
     }
@@ -14,16 +18,39 @@ class TruthTable private constructor(
         return super.hashCode()
     }
 
+    fun perfectDisjunctiveNormalForm() {
+        var pdnf = ""
+        this.table.forEach { (vars, fnVal) ->
+            if (fnVal) {
+                pdnf += vars.mapIndexed { index, it -> if (it) this.varNames[index] else "¬${this.varNames[index]}" }
+                    .joinToString(separator = " & ")
+                    .wrapWithBrackets()
+                    .plus(" ⋁ ")
+            }
+        }
+        println("СДНФ: ${pdnf.dropLast(2)}")
+    }
+
+    fun perfectConjunctiveNormalForm() {
+        var pcnf = ""
+        this.table.forEach { (vars, fnVal) ->
+            if (!fnVal) {
+                pcnf += vars.mapIndexed { index, it -> if (!it) this.varNames[index] else "¬${this.varNames[index]}" }
+                    .joinToString(separator = " ⋁ ")
+                    .wrapWithBrackets()
+                    .plus(" & ")
+            }
+        }
+        println("СКНФ: ${pcnf.dropLast(2)}")
+    }
+
     /**
      * Проверяет является ли данный булев вектор подмножестом другого булевого вектора
-     *
-     * @param other другой булев вектор для сравнения
-     * @return [Boolean] является подмножеством
      */
     fun isSubsetOf(other: TruthTable): Boolean {
-        if (this.body.length == other.body.length) {
-            for (letter in this.body.indices) {
-                if (this.body[letter] == '1' && other.body[letter] == '0')
+        if (this.vector.length == other.vector.length) {
+            for (letter in this.vector.indices) {
+                if (this.vector[letter] == '1' && other.vector[letter] == '0')
                     return false
             }
             return true
@@ -36,20 +63,7 @@ class TruthTable private constructor(
      */
     fun printVector() {
         print("${this.name} = ")
-        println(this.body.split("").filter { it != "" }.joinToString(prefix = "(", postfix = ")"))
-    }
-
-    /**
-     * Выводит на экран таблицу имстинности
-     */
-    fun printTable() {
-        println("Таблица истинности ${this.name}:")
-        when (body.length) {
-            4 -> println(prettyTwo(body))
-            8 -> println(prettyThree(body))
-            16 -> println(prettyFour(body))
-            else -> throw Throwable("Было введено не поддерживаемое количество переменных!")
-        }
+        println(this.vector.split("").filter { it != "" }.joinToString(prefix = "(", postfix = ")"))
     }
 
     // Таблица истинности создается через функцию from
@@ -57,158 +71,121 @@ class TruthTable private constructor(
     companion object {
         /**
          * Создает [TruthTable] по логической функции для двух переменных
-         *
-         * @param name имя булевого вектора/таблицы истинности для вывода.
-         * @param fn логическая функция, принимающая 2 аргумента (переменных)
-         * @return [String] булев вектор
          */
-        fun from(name: String, fn: (Boolean, Boolean) -> Boolean): TruthTable {
+        fun from(name: String, varNames: List<Char>, fn: (Boolean, Boolean) -> Boolean): TruthTable {
             var vector = ""
+            val table = arrayListOf<Pair<ArrayList<Boolean>, Boolean>>()
             for (a in 0..1)
-                for (b in 0..1)
-                    vector += if (fn(a == 1, b == 1)) "1" else "0"
-            return TruthTable(name, vector)
+                for (b in 0..1) {
+                    table.add(arrayListOf(a.toBoolean(), b.toBoolean()) to fn(a.toBoolean(), b.toBoolean()))
+                    vector += if (fn(a.toBoolean(), b.toBoolean())) "1" else "0"
+                }
+            return TruthTable(name, varNames, vector, table)
         }
 
         /**
          * Создает [TruthTable] по логической функции для трех переменных
-         *
-         * @param name имя булевого вектора/таблицы истинности для вывода.
-         * @param fn логическая функция, принимающая 3 аргумента (переменных)
-         * @return [String] булев вектор
          */
-        fun from(name: String, fn: (Boolean, Boolean, Boolean) -> Boolean): TruthTable {
+        fun from(name: String, varNames: List<Char>, fn: (Boolean, Boolean, Boolean) -> Boolean): TruthTable {
             var vector = ""
+            val table = arrayListOf<Pair<ArrayList<Boolean>, Boolean>>()
             for (a in 0..1)
                 for (b in 0..1)
-                    for (c in 0..1)
-                        vector += if (fn(a == 1, b == 1, c == 1)) "1" else "0"
-            return TruthTable(name, vector)
+                    for (c in 0..1) {
+                        table.add(
+                            arrayListOf(a.toBoolean(), b.toBoolean(), c.toBoolean()) to fn(
+                                a.toBoolean(),
+                                b.toBoolean(),
+                                c.toBoolean()
+                            )
+                        )
+                        vector += if (fn(a.toBoolean(), b.toBoolean(), c.toBoolean())) "1" else "0"
+                    }
+            return TruthTable(name, varNames, vector, table)
         }
 
         /**
          * Создает [TruthTable] по логической функции для четырех переменных
-         *
-         * @param name имя булевого вектора/таблицы истинности для вывода.
-         * @param fn логическая функция, принимающая 4 аргумента (переменных)
-         * @return [String] булев вектор
          */
-        fun from(name: String, fn: (Boolean, Boolean, Boolean, Boolean) -> Boolean): TruthTable {
+        fun from(name: String, varNames: List<Char>, fn: (Boolean, Boolean, Boolean, Boolean) -> Boolean): TruthTable {
             var vector = ""
+            val table = arrayListOf<Pair<ArrayList<Boolean>, Boolean>>()
             for (a in 0..1)
                 for (b in 0..1)
                     for (c in 0..1)
-                        for (d in 0..1)
-                            vector += if (fn(a == 1, b == 1, c == 1, d == 1)) "1" else "0"
-            return TruthTable(name, vector)
+                        for (d in 0..1) {
+                            table.add(
+                                arrayListOf(a.toBoolean(), b.toBoolean(), c.toBoolean(), d.toBoolean()) to fn(
+                                    a.toBoolean(),
+                                    b.toBoolean(),
+                                    c.toBoolean(),
+                                    d.toBoolean()
+                                )
+                            )
+                            vector += if (fn(a.toBoolean(), b.toBoolean(), c.toBoolean(), d.toBoolean())) "1" else "0"
+                        }
+            return TruthTable(name, varNames, vector, table)
         }
 
         /**
          * Создает [TruthTable] из булевого вектора
-         *
-         * @param name имя булевого вектора/таблицы истинности для вывода.
-         * @param vector булев вектор
-         * @return [String] булев вектор
          */
-        fun from(name: String, vector: String): TruthTable {
+        fun from(name: String, varNames: List<Char>, vector: String): TruthTable {
             val isPowerOfTwo = (vector.length) and (vector.length - 1) == 0
-            if (isPowerOfTwo && vector.length != 0 && vector.length != 1)
-                return TruthTable(name, vector)
-            else
+            if (isPowerOfTwo && vector.length >= 4) {
+                val product = when (vector.length) {
+                    4 -> cartesianProduct(setOf(true, false), setOf(true, false))
+                    8 -> cartesianProduct(setOf(true, false), setOf(true, false), setOf(true, false))
+                    16 -> cartesianProduct(
+                        setOf(true, false),
+                        setOf(true, false),
+                        setOf(true, false),
+                        setOf(true, false)
+                    )
+                    else -> throw Throwable("Введено неподдерживаемое количество переменных, равное: ${log2(vector.length.toDouble())}")
+                }
+                val table = product.mapIndexed { index, it -> it to vector[index].toInt().toBoolean() }
+                return TruthTable(name, varNames, vector, table)
+            } else
                 throw Throwable("Нельзя создать таблицу истинности для данного вектора. Проверьте его длину на корректность.")
         }
 
         /**
          * Выводит взаимное расположение множеств (является ли подмножеством, равны ли пожмножества)
-         *
-         * @param tables - [List] из [TruthTable], которые нужно проверять
          */
         fun printSubsetsEquality(tables: List<TruthTable>) {
-            cartesianProduct(tables, tables).filter { it.first.name != it.second.name }.forEach {
-                if (it.first == it.second)
-                    println("${it.first.name} ⊆ ${it.second.name}") // first ⊂ second и first = second
-                else if (it.first.isSubsetOf(it.second))
-                    println("${it.first.name} ⊂ ${it.second.name}")
-            }
+            tables.flatMap { first -> tables.map { second -> first to second } }
+                .filter { it.first.name != it.second.name }
+                .forEach {
+                    if (it.first == it.second)
+                        println("${it.first.name} ⊆ ${it.second.name}") // first ⊂ second and first = second
+                    else if (it.first.isSubsetOf(it.second))
+                        println("${it.first.name} ⊂ ${it.second.name}")
+                }
         }
     }
-
-
     /**
-     * Строит таблицу истинности по булевому вектору для двух переменных
-     *
-     * @param vectorFn Булев вектор типа [Array] из [Int], содержащий
-     * функции
-     * упорядоченный набор из чисел типа [Int]
-     * @return [String] таблицу истинности, приятную для просмотра
+     * Выводит таблицу истинности
      */
-    private fun prettyTwo(vectorFn: String): String {
-        var prettyTable = ""
-        if (vectorFn.length == 4) {
-            prettyTable += "+---+---+---+\n"
-            prettyTable += "| a | b | F |\n"
-            prettyTable += "+---+---+---+\n"
-            var vectorPos = 0
-            for (x in 0..1)
-                for (y in 0..1)
-                    prettyTable += "| $x | $y | ${vectorFn[vectorPos++]} |\n"
-            prettyTable += "+---+---+---+"
-            return prettyTable
-        } else {
-            throw Throwable("Для построения таблицы истинности из 2х переменных, длина вектора должна равняться 4.")
-        }
-    }
+    fun printTable() {
+        val printDivider = { println("+---".repeat(this.varNames.size + 1).plus("+")) }
 
-    /**
-     * Строит таблицу истинности по булевому вектору для трех переменных
-     *
-     * @param vectorFn Булев вектор типа [Array] из [Int], содержащий
-     * функции
-     * упорядоченный набор из чисел типа [Int]
-     * @return [String] таблицу истинности, приятную для просмотра
-     */
-    private fun prettyThree(vectorFn: String): String {
-        var prettyTable = ""
-        if (vectorFn.length == 8) {
-            prettyTable += "+---+---+---+---+\n"
-            prettyTable += "| a | b | c | F |\n"
-            prettyTable += "+---+---+---+---+\n"
-            var vectorPos = 0
-            for (x in 0..1)
-                for (y in 0..1)
-                    for (z in 0..1)
-                        prettyTable += "| $x | $y | $z | ${vectorFn[vectorPos++]} |\n"
-            prettyTable += "+---+---+---+---+"
-            return prettyTable
-        } else {
-            throw Throwable("Для построения таблицы истинности из 3х переменных, длина вектора должна равняться 8.")
+        printDivider()
+        // Prints variable names and Function (Table) name
+        println(
+            this.varNames.joinToString(separator = " | ", prefix = "| ", postfix = " | ")
+                .plus(name)
+                .plus(" |")
+        )
+        printDivider()
+        this.table.forEach { (vars, fnVal) ->
+            println(
+                vars.map(Boolean::toInt)
+                    .joinToString(separator = " | ", prefix = "| ", postfix = " | ")
+                    .plus(fnVal.toInt())
+                    .plus(" |")
+            )
         }
-    }
-
-    /**
-     * Строит таблицу истинности по булевому вектору для четырех переменных
-     *
-     * @param vectorFn Булев вектор типа [Array] из [Int], содержащий
-     * функции
-     * упорядоченный набор из чисел типа [Int]
-     * @return [String] таблицу истинности, приятную для просмотра
-     */
-    private fun prettyFour(vectorFn: String): String {
-        var prettyTable = ""
-        if (vectorFn.length == 16) {
-            prettyTable += "+---+---+---+---+---+\n"
-            prettyTable += "| a | b | c | d | F |\n"
-            prettyTable += "+---+---+---+---+---+\n"
-            var vectorPos = 0
-            for (a in 0..1)
-                for (b in 0..1)
-                    for (c in 0..1)
-                        for (d in 0..1)
-                            prettyTable += "| $a | $b | c | d | ${vectorFn[vectorPos++]} |\n"
-            prettyTable += "+---+---+---+---+---+"
-            return prettyTable
-        } else {
-            throw Throwable("Для построения таблицы истинности из 4х переменных, длина вектора должна равняться 16.")
-        }
+        printDivider()
     }
 }
