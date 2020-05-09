@@ -18,6 +18,8 @@ infix fun Boolean.symDiffers(other: Boolean) = (this and !other) or (!this and o
 
 fun Int.toBoolean() = this == 1
 
+fun Char.toBoolean() = this.toString().toInt().toBoolean()
+
 fun Boolean.toInt() = if (this) 1 else 0
 
 fun String.wrapWithBrackets() = "($this)"

@@ -134,17 +134,17 @@ class TruthTable private constructor(
             val isPowerOfTwo = (vector.length) and (vector.length - 1) == 0
             if (isPowerOfTwo && vector.length >= 4) {
                 val product = when (vector.length) {
-                    4 -> cartesianProduct(setOf(true, false), setOf(true, false))
-                    8 -> cartesianProduct(setOf(true, false), setOf(true, false), setOf(true, false))
+                    4 -> cartesianProduct(setOf(false, true), setOf(false, true))
+                    8 -> cartesianProduct(setOf(false, true), setOf(false, true), setOf(false, true))
                     16 -> cartesianProduct(
-                        setOf(true, false),
-                        setOf(true, false),
-                        setOf(true, false),
-                        setOf(true, false)
+                        setOf(false, true),
+                        setOf(false, true),
+                        setOf(false, true),
+                        setOf(false, true)
                     )
                     else -> throw Throwable("Введено неподдерживаемое количество переменных, равное: ${log2(vector.length.toDouble())}")
                 }
-                val table = product.mapIndexed { index, it -> it to vector[index].toInt().toBoolean() }
+                val table = product.mapIndexed { index, it -> it to vector[index].toBoolean() }
                 return TruthTable(name, varNames, vector, table)
             } else
                 throw Throwable("Нельзя создать таблицу истинности для данного вектора. Проверьте его длину на корректность.")
