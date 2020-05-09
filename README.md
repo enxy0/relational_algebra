@@ -83,12 +83,11 @@ C = (1, 1, 1, 1, 1, 1, 1, 1)
 
 ### СДНФ и СКНФ 
 
-Вывод
 ```kotlin
 truthTableD.perfectDisjunctiveNormalForm() // СДНФ
 truthTableD.perfectConjunctiveNormalForm() // СКНФ
 ```
-
+Вывод
 ```
 СДНФ: (¬a & ¬b & ¬c) ⋁ (¬a & ¬b & c) ⋁ (¬a & b & ¬c) ⋁ (¬a & b & c) ⋁ (a & ¬b & c) ⋁ (a & b & ¬c) ⋁ (a & b & c) 
 СКНФ: (¬a ⋁ b ⋁ c) 
