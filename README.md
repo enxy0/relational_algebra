@@ -1,7 +1,7 @@
 # Различные вспомогательные штуки для Реляционной Алгебры
 ### Логические операции:
 
-| Операция            | Запись в коде            |
+|       Операция       |      Запись в коде       |
 |---------------------|--------------------------|
 |        x ∨ y        |```x or y (или \|\|)```   |
 |        x & y        |```x and y (или &&)```    |
@@ -12,33 +12,39 @@
 |        x ← y        |```x converseImplies y``` |
 |        x ↑ y        |```x nand y```            |
 |        x ↓ y        |```x nor y```             |
+|        x ⊕ y       |```x xor y```              |
+|        x ~ y        |```x == y```
 
 ### Создание таблицы истинности из логической функции (для 2х, 3х и 4х переменных)
 ```kotlin
-val truthTableD = TruthTable.from("D") { a, b, c ->
+// для 2х переменных
+val truthTableE = TruthTable.from("E", listOf('x', 'y')) { x, y ->
+    // (x ∆ y) ↑ ¬(x & y)
+    (x symDiffers y) nand !(x and y)
+}
+
+// для 3х переменных
+val truthTableD = TruthTable.from("D", listOf('a', 'b', 'c')) { a, b, c ->
     // (a \ b) → c
     (a differs b) implies c
 }
 
-val truthTableE = TruthTable.from("E") { a, b, c ->
-    // (a ∆ b) ↑ ¬(a & b)
-    (a symDiffers b) nand !(a and b)
+// для 4х переменных
+val truthTableF = TruthTable.from("F", listOf('a', 'b', 'c', 'd')) { a, b, c, d ->
+    // (a ↓ b) ← (1 ∨ (c & d))
+    (a nor b) converseImplies (true or (c and d))
 }
 
-val truthTableF = TruthTable.from("F") { a, b, c ->
-    // (a ↓ b) ← 1
-    (a nor b) converseImplies true
-}
-
-val truthTableA = TruthTable.from("A") { a, b, c ->
-    // a → c (при этом таблица будет построена для 3 переменных)
+// для 3х переменных (при этом функция использует две переменные)
+val truthTableA = TruthTable.from("A", listOf('a', 'b', 'c')) { a, b, c ->
+    // a → c
     a implies c
 }
 ```
 
 ### Создание таблицы истинности по заданному булевому вектору:
 ```kotlin
-val truthTableC = TruthTable.from("C", "11111111")
+val truthTableC = TruthTable.from("C", listOf('x', 'y', 'z'), "11111111")
 ```
 ### Красивый вывод таблицы истинности:
 ```kotlin
@@ -46,9 +52,8 @@ truthTableD.printTable()
 ```
 Вывод:
 ```
-Таблица истинности D:
 +---+---+---+---+
-| a | b | c | F |
+| a | b | c | D |
 +---+---+---+---+
 | 0 | 0 | 0 | 1 |
 | 0 | 0 | 1 | 1 |
@@ -71,9 +76,22 @@ truthTableC.printVector()
 Вывод:
 ```
 D = (1, 1, 1, 1, 0, 1, 1, 1)
-E = (1, 1, 0, 0, 0, 0, 1, 1)
-F = (1, 1, 0, 0, 0, 0, 0, 0)
+E = (1, 0, 0, 1)
+F = (1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 C = (1, 1, 1, 1, 1, 1, 1, 1)
+```
+
+### СДНФ и СКНФ 
+
+Вывод
+```kotlin
+truthTableD.perfectDisjunctiveNormalForm() // СДНФ
+truthTableD.perfectConjunctiveNormalForm() // СКНФ
+```
+
+```
+СДНФ: (¬a & ¬b & ¬c) ⋁ (¬a & ¬b & c) ⋁ (¬a & b & ¬c) ⋁ (¬a & b & c) ⋁ (a & ¬b & c) ⋁ (a & b & ¬c) ⋁ (a & b & c) 
+СКНФ: (¬a ⋁ b ⋁ c) 
 ```
 
 ### Проверка на взаимное расположения булевых векторов (равно, входит/не входит в подмножество):
