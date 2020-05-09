@@ -18,25 +18,25 @@
 ### Создание таблицы истинности из логической функции (для 2х, 3х и 4х переменных)
 ```kotlin
 // для 2х переменных
-val truthTableE = TruthTable.from("E", listOf('x', 'y')) { x, y ->
+val truthTableE = TruthTable.from('E', listOf('x', 'y')) { x, y ->
     // (x ∆ y) ↑ ¬(x & y)
     (x symDiffers y) nand !(x and y)
 }
 
 // для 3х переменных
-val truthTableD = TruthTable.from("D", listOf('a', 'b', 'c')) { a, b, c ->
+val truthTableD = TruthTable.from('D', listOf('a', 'b', 'c')) { a, b, c ->
     // (a \ b) → c
     (a differs b) implies c
 }
 
 // для 4х переменных
-val truthTableF = TruthTable.from("F", listOf('a', 'b', 'c', 'd')) { a, b, c, d ->
+val truthTableF = TruthTable.from('F', listOf('a', 'b', 'c', 'd')) { a, b, c, d ->
     // (a ↓ b) ← (1 ∨ (c & d))
     (a nor b) converseImplies (true or (c and d))
 }
 
 // для 3х переменных (при этом функция использует две переменные)
-val truthTableA = TruthTable.from("A", listOf('a', 'b', 'c')) { a, b, c ->
+val truthTableA = TruthTable.from('A', listOf('a', 'b', 'c')) { a, b, c ->
     // a → c
     a implies c
 }
@@ -44,7 +44,7 @@ val truthTableA = TruthTable.from("A", listOf('a', 'b', 'c')) { a, b, c ->
 
 ### Создание таблицы истинности по заданному булевому вектору:
 ```kotlin
-val truthTableC = TruthTable.from("C", listOf('x', 'y', 'z'), "11111111")
+val truthTableC = TruthTable.from('C', listOf('x', 'y', 'z'), "11111111")
 ```
 ### Красивый вывод таблицы истинности:
 ```kotlin
