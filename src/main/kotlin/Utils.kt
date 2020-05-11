@@ -25,15 +25,18 @@ fun Boolean.toInt() = if (this) 1 else 0
 fun String.wrapWithBrackets() = "($this)"
 
 /**
- * Декартово произведение [Set] из [Boolean] (специально для таблицы истинности)
+ * Декартово произведение
  */
-fun cartesianProduct(vararg sets: Collection<Boolean>): Set<List<Boolean>> =
-    when (sets.size) {
+fun<T> cartesianProduct(collection: Collection<T>, repeat: Int): Set<List<T>> {
+    val collections: ArrayList<Collection<T>> = arrayListOf()
+    for (i in 0 until repeat) collections.add(collection)
+    return when (collections.size) {
         0, 1 -> emptySet()
-        else -> sets.fold(listOf(listOf<Boolean>())) { acc, set ->
+        else -> collections.fold(listOf(listOf<T>())) { acc, set ->
             acc.flatMap { list -> set.map { element -> list + element } }
         }.toSet()
     }
+}
 
 /**
  * Перестановки двух [Collection]

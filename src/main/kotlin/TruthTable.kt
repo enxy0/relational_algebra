@@ -1,11 +1,98 @@
 import kotlin.math.log2
 
-class TruthTable private constructor(
+@Suppress("DataClassPrivateConstructor")
+data class TruthTable private constructor(
     val name: Char,
     private val varNames: List<Char>,
     private val vector: String,
     private val table: List<Pair<List<Boolean>, Boolean>>
 ) {
+    // Таблица истинности создается через функцию build
+    // Передайте булев вектор или логическую фунцкию для 2х, 3х или 4х переменных.
+    companion object {
+        /**
+         * Создает [TruthTable] из булевого вектора
+         * @param name имя для логической функции
+         * @param varNames [List] имена для переменных таблицы истинности (нужны для ее вывода). Пример: x, y, z, ...
+         * @param fn логическая функция с 2 параметрами
+         */
+        fun build(name: Char, varNames: List<Char>, fn: (Boolean, Boolean) -> Boolean): TruthTable {
+            var vector = ""
+            val table = cartesianProduct(setOf(false, true), 2).map { vars ->
+                val fnVal = fn(vars[0], vars[1])
+                vector += if (fnVal) "1" else "0"
+                vars to fnVal
+            }
+            return TruthTable(name, varNames, vector, table)
+        }
+
+        /**
+         * Создает [TruthTable] из булевого вектора
+         * @param name имя для логической функции
+         * @param varNames [List] имена для переменных таблицы истинности (нужны для ее вывода). Пример: x, y, z, ...
+         * @param fn логическая функция с 3 параметрами
+         */
+        fun build(name: Char, varNames: List<Char>, fn: (Boolean, Boolean, Boolean) -> Boolean): TruthTable {
+            var vector = ""
+            val table = cartesianProduct(setOf(false, true), 3).map { vars ->
+                val fnVal = fn(vars[0], vars[1], vars[2])
+                vector += if (fnVal) "1" else "0"
+                vars to fnVal
+            }
+            return TruthTable(name, varNames, vector, table)
+        }
+
+        /**
+         * Создает [TruthTable] из булевого вектора
+         * @param name имя для логической функции
+         * @param varNames [List] имена для переменных таблицы истинности (нужны для ее вывода). Пример: x, y, z, ...
+         * @param fn логическая функция с 4 параметрами
+         */
+        fun build(name: Char, varNames: List<Char>, fn: (Boolean, Boolean, Boolean, Boolean) -> Boolean): TruthTable {
+            var vector = ""
+            val table = cartesianProduct(setOf(false, true), 4).map { vars ->
+                val fnVal = fn(vars[0], vars[1], vars[2], vars[3])
+                vector += if (fnVal) "1" else "0"
+                vars to fnVal
+            }
+            return TruthTable(name, varNames, vector, table)
+        }
+
+        /**
+         * Создает [TruthTable] из булевого вектора
+         * @param name имя для логической функции
+         * @param varNames [List] имена для переменных таблицы истинности (нужны для ее вывода). Пример: x, y, z, ...
+         * @param vector булев вектор. Пример: "10001111".
+         */
+        fun build(name: Char, varNames: List<Char>, vector: String): TruthTable {
+            val isPowerOfTwo = (vector.length) and (vector.length - 1) == 0
+            if (isPowerOfTwo && vector.length >= 4) {
+                val repeat = log2(vector.length.toDouble()).toInt()
+                val table = cartesianProduct(setOf(false, true), repeat).mapIndexed { index, it ->
+                    it to vector[index].toBoolean()
+                }
+                return TruthTable(name, varNames, vector, table)
+            } else
+                throw Throwable("Нельзя создать таблицу истинности для данного вектора. Проверьте его длину на корректность.")
+        }
+
+        /**
+         * Выводит взаимное расположение множеств (является ли подмножеством, равны ли пожмножества)
+         */
+        fun printSubsetsEquality(tables: List<TruthTable>) {
+            cartesianProduct(tables, 2)
+                .filter { it[0].name != it[1].name }
+                .forEach {
+                    if (it[0] == it[1])
+                        println("${it[0].name} ⊆ ${it[1].name}") // first ⊂ second and first = second
+                    else if (it[0].isSubsetOf(it[1]))
+                        println("${it[0].name} ⊂ ${it[1].name}")
+//                    else
+//                        println(("${it[0].name} ⊄ ${it[1].name}"))
+                }
+        }
+    }
+
     override fun equals(other: Any?): Boolean {
         return when (other) {
             is TruthTable -> this.table == other.table
@@ -14,9 +101,7 @@ class TruthTable private constructor(
         }
     }
 
-    override fun hashCode(): Int {
-        return super.hashCode()
-    }
+    override fun hashCode(): Int = super.hashCode()
 
     fun perfectDisjunctiveNormalForm() {
         var pdnf = ""
@@ -66,104 +151,6 @@ class TruthTable private constructor(
         println(this.vector.split("").filter { it != "" }.joinToString(prefix = "(", postfix = ")"))
     }
 
-    // Таблица истинности создается через функцию from
-    // Передайте булев вектор или логическую фунцкию для 2х, 3х или 4х переменных.
-    companion object {
-        /**
-         * Создает [TruthTable] по логической функции для двух переменных
-         */
-        fun from(name: Char, varNames: List<Char>, fn: (Boolean, Boolean) -> Boolean): TruthTable {
-            var vector = ""
-            val table = arrayListOf<Pair<ArrayList<Boolean>, Boolean>>()
-            for (a in 0..1)
-                for (b in 0..1) {
-                    table.add(arrayListOf(a.toBoolean(), b.toBoolean()) to fn(a.toBoolean(), b.toBoolean()))
-                    vector += if (fn(a.toBoolean(), b.toBoolean())) "1" else "0"
-                }
-            return TruthTable(name, varNames, vector, table)
-        }
-
-        /**
-         * Создает [TruthTable] по логической функции для трех переменных
-         */
-        fun from(name: Char, varNames: List<Char>, fn: (Boolean, Boolean, Boolean) -> Boolean): TruthTable {
-            var vector = ""
-            val table = arrayListOf<Pair<ArrayList<Boolean>, Boolean>>()
-            for (a in 0..1)
-                for (b in 0..1)
-                    for (c in 0..1) {
-                        table.add(
-                            arrayListOf(a.toBoolean(), b.toBoolean(), c.toBoolean()) to fn(
-                                a.toBoolean(),
-                                b.toBoolean(),
-                                c.toBoolean()
-                            )
-                        )
-                        vector += if (fn(a.toBoolean(), b.toBoolean(), c.toBoolean())) "1" else "0"
-                    }
-            return TruthTable(name, varNames, vector, table)
-        }
-
-        /**
-         * Создает [TruthTable] по логической функции для четырех переменных
-         */
-        fun from(name: Char, varNames: List<Char>, fn: (Boolean, Boolean, Boolean, Boolean) -> Boolean): TruthTable {
-            var vector = ""
-            val table = arrayListOf<Pair<ArrayList<Boolean>, Boolean>>()
-            for (a in 0..1)
-                for (b in 0..1)
-                    for (c in 0..1)
-                        for (d in 0..1) {
-                            table.add(
-                                arrayListOf(a.toBoolean(), b.toBoolean(), c.toBoolean(), d.toBoolean()) to fn(
-                                    a.toBoolean(),
-                                    b.toBoolean(),
-                                    c.toBoolean(),
-                                    d.toBoolean()
-                                )
-                            )
-                            vector += if (fn(a.toBoolean(), b.toBoolean(), c.toBoolean(), d.toBoolean())) "1" else "0"
-                        }
-            return TruthTable(name, varNames, vector, table)
-        }
-
-        /**
-         * Создает [TruthTable] из булевого вектора
-         */
-        fun from(name: Char, varNames: List<Char>, vector: String): TruthTable {
-            val isPowerOfTwo = (vector.length) and (vector.length - 1) == 0
-            if (isPowerOfTwo && vector.length >= 4) {
-                val product = when (vector.length) {
-                    4 -> cartesianProduct(setOf(false, true), setOf(false, true))
-                    8 -> cartesianProduct(setOf(false, true), setOf(false, true), setOf(false, true))
-                    16 -> cartesianProduct(
-                        setOf(false, true),
-                        setOf(false, true),
-                        setOf(false, true),
-                        setOf(false, true)
-                    )
-                    else -> throw Throwable("Введено неподдерживаемое количество переменных, равное: ${log2(vector.length.toDouble())}")
-                }
-                val table = product.mapIndexed { index, it -> it to vector[index].toBoolean() }
-                return TruthTable(name, varNames, vector, table)
-            } else
-                throw Throwable("Нельзя создать таблицу истинности для данного вектора. Проверьте его длину на корректность.")
-        }
-
-        /**
-         * Выводит взаимное расположение множеств (является ли подмножеством, равны ли пожмножества)
-         */
-        fun printSubsetsEquality(tables: List<TruthTable>) {
-            tables.flatMap { first -> tables.map { second -> first to second } }
-                .filter { it.first.name != it.second.name }
-                .forEach {
-                    if (it.first == it.second)
-                        println("${it.first.name} ⊆ ${it.second.name}") // first ⊂ second and first = second
-                    else if (it.first.isSubsetOf(it.second))
-                        println("${it.first.name} ⊂ ${it.second.name}")
-                }
-        }
-    }
     /**
      * Выводит таблицу истинности
      */

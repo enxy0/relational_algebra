@@ -16,36 +16,35 @@ fun main() {
 
     // Создание таблицы истинности (булевого вектора) с помощью заданной функции
     // для 2х переменных
-    val truthTableE = TruthTable.from('E', listOf('x', 'y')) { x, y ->
+    val truthTableE = TruthTable.build(name = 'E', varNames = listOf('x', 'y')) { x, y ->
         // (x ∆ y) ↑ ¬(x & y)
         (x symDiffers y) nand !(x and y)
     }
 
     // для 3х переменных
-    val truthTableD = TruthTable.from('D', listOf('a', 'b', 'c')) { a, b, c ->
+    val truthTableD = TruthTable.build(name = 'D', varNames = listOf('a', 'b', 'c')) { a, b, c ->
         // (a \ b) → c
         (a differs b) implies c
     }
 
     // для 4х переменных
-    val truthTableF = TruthTable.from('F', listOf('a', 'b', 'c', 'd')) { a, b, c, d ->
+    val truthTableF = TruthTable.build(name = 'F', varNames = listOf('a', 'b', 'c', 'd')) { a, b, c, d ->
         // (a ↓ b) ← (1 ∨ (c & d))
         (a nor b) converseImplies (true or (c and d))
     }
 
     // для 3х переменных (при этом функция использует две переменные)
-    val truthTableA = TruthTable.from('A', listOf('a', 'b', 'c')) { a, b, c ->
+    val truthTableA = TruthTable.build(name = 'A', varNames = listOf('a', 'b', 'c')) { a, b, c ->
         // a → c
         a implies c
     }
 
     // Создание таблицы истинности по заданному булевому вектору
-    val truthTableC = TruthTable.from('C', listOf('x', 'y', 'z'), "11111111")
-    val truthTableV = TruthTable.from('V', listOf('a', 'b', 'c'), "11111111")
+    val truthTableC = TruthTable.build(name = 'C', varNames = listOf('x', 'y', 'z'), vector = "11111111")
+    val truthTableV = TruthTable.build(name = 'V', varNames = listOf('a', 'b', 'c'), vector = "11111111")
 
     // Вывод таблицы истинности
     truthTableD.printTable()
-
     println()
 
     // Вывод булевого вектора
