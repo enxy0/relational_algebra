@@ -25,9 +25,18 @@ fun Boolean.toInt() = if (this) 1 else 0
 fun String.wrapWithBrackets() = "($this)"
 
 /**
+ * Создает пустую таблицу истинности (заготовка для добавления данных)
+ */
+fun createEmptyTable(tableSize: Int): ArrayList<ArrayList<Boolean>> {
+    val emptyTable = arrayListOf<ArrayList<Boolean>>()
+    for (i in 0 until tableSize) emptyTable.add(arrayListOf())
+    return emptyTable
+}
+
+/**
  * Декартово произведение
  */
-fun<T> cartesianProduct(collection: Collection<T>, repeat: Int): Set<List<T>> {
+fun <T> cartesianProduct(collection: Collection<T>, repeat: Int): Set<List<T>> {
     val collections: ArrayList<Collection<T>> = arrayListOf()
     for (i in 0 until repeat) collections.add(collection)
     return when (collections.size) {
