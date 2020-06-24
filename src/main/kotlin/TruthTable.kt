@@ -157,7 +157,7 @@ data class TruthTable private constructor(
         val polynom = build('_', this.varNames, vector).table.fold("") { acc, (vars, fnVal) ->
             if (fnVal)
                 if (vars.all { !it })
-                    acc + "1" + " ⊕ "
+                    acc + "1 ⊕ "
                 else
                     acc + vars.mapIndexed { index, it -> this.varNames[index] to it }
                         .filter { (_, it) -> it }
@@ -189,7 +189,12 @@ data class TruthTable private constructor(
      */
     fun printVector() {
         print("${this.name} = ")
-        println(this.vector.split("").filter { it != "" }.joinToString(prefix = "(", postfix = ")"))
+        println(
+            this.vector
+            .split("")
+            .filter { it != "" }
+            .joinToString(prefix = "(", postfix = ")")
+        )
     }
 
     /**
@@ -199,7 +204,6 @@ data class TruthTable private constructor(
         val printDivider = { println("+---".repeat(this.varNames.size + 1).plus("+")) }
 
         printDivider()
-        // Prints variable names and Function (Table) name
         println(
             this.varNames.joinToString(separator = " | ", prefix = "| ", postfix = " | ")
                 .plus(name)
